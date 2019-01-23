@@ -2,9 +2,9 @@ name:                new-post
 version:             0.1.0.0
 github:              "githubuser/new-post"
 license:             BSD3
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2019 Author name here"
+author:              "Artem Chernyak"
+maintainer:          "artemchernyak@gmail.com"
+copyright:           "2019 Artem Chernyak"
 
 extra-source-files:
 - README.md
@@ -23,12 +23,13 @@ dependencies:
 - base >= 4.7 && < 5
 - text
 - time
+- process
 
 library:
   source-dirs: src
 
 executables:
-  new-post-exe:
+  new-post:
     main:                Main.hs
     source-dirs:         app
     ghc-options:

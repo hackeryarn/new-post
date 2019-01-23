@@ -12,15 +12,19 @@ import qualified Data.Text          as T
 import qualified Data.Text.IO       as IO
 import           Data.Time.Calendar
 import           Data.Time.Clock
+import           System.IO
+import           System.Process
 
 newFile :: String -> IO ()
 newFile file = do
   content <- IO.readFile file
   currentDate <- toGregorian . utctDay <$> getCurrentTime
+  entry <- getEntry
   let ls = T.lines content
       day = show $ getDay file + 1
       newFileName = "day" ++ day ++ ".md"
-      newContent = map (setDay day . setDate currentDate) $ deleteBody ls
+      newContent =
+        (map (setDay day . setDate currentDate) $ deleteBody ls) ++ entry
    in IO.writeFile newFileName $ T.unlines newContent
 
 setDate :: (Integer, Int, Int) -> Text -> Text
@@ -47,3 +51,13 @@ deleteBody (h:t) = h : takeWhile (/= "---") t ++ ["---"]
 
 getDay :: String -> Int
 getDay = read . filter isNumber
+
+getEntry :: IO [Text]
+getEntry =
+  let opts = ["-on", "yesterday", "@reading"]
+   in do (_, Just hout, _, _) <-
+           createProcess (proc "jrnl" opts) {std_out = CreatePipe}
+         contents <- hGetContents hout
+         return .
+           tail . map (T.pack . unwords . tail . words) . filter (/= "") . lines $
+           contents
