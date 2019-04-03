@@ -15,17 +15,19 @@ import           Data.Time.Clock
 import           System.IO
 import           System.Process
 
-newFile :: String -> IO ()
+newFile :: String -> IO String
 newFile file = do
   content <- IO.readFile file
   currentDate <- toGregorian . utctDay <$> getCurrentTime
-  entry <- getEntry
   let ls = T.lines content
       day = show $ getDay file + 1
       newFileName = "day" ++ day ++ ".md"
       newContent =
-        (map (setDay day . setDate currentDate) $ deleteBody ls) ++ entry
-   in IO.writeFile newFileName $ T.unlines newContent
+        (map (setDay day . setDate currentDate) $ deleteBody ls)
+   in do
+    IO.writeFile newFileName $ T.unlines newContent
+    return newFileName
+      
 
 setDate :: (Integer, Int, Int) -> Text -> Text
 setDate date line

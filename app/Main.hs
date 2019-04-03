@@ -6,4 +6,5 @@ import System.Environment
 main :: IO ()
 main = do
   [arg] <- getArgs
-  newFile arg
+  newFileName <- newFile arg
+  putStrLn newFileName
