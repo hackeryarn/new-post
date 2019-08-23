@@ -18,7 +18,7 @@ import           System.Process
 newFile :: String -> IO String
 newFile file = do
   content <- IO.readFile file
-  currentDate <- toGregorian . utctDay <$> getCurrentTime
+  currentDate <- convertTime
   let ls = T.lines content
       day = show $ getDay file + 1
       newFileName = "day" ++ day ++ ".md"
@@ -27,7 +27,9 @@ newFile file = do
    in do
     IO.writeFile newFileName $ T.unlines newContent
     return newFileName
-      
+
+convertTime :: IO (Integer, Int, Int)
+convertTime = toGregorian . utctDay <$> getCurrentTime
 
 setDate :: (Integer, Int, Int) -> Text -> Text
 setDate date line
